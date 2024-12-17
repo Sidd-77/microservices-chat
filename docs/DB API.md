@@ -1,0 +1,148 @@
+# DB-service Documentation
+
+## User
+
+### Search Users
+**Path:** `/users/searchUsers`
+
+**Method:** `POST`
+
+**Parameters:**
+- `query` (string): The query text, which will be matched with the username and email.
+
+**Returns:**
+- `[user]` (array): Array of users matching the query.
+
+---
+
+### Get User
+**Path:** `/users/getUser`
+
+**Method:** `POST`
+
+**Parameters:**
+- `id` (string): The ID of the user to fetch.
+
+**Returns:**
+- `user` (object): Details of the user.
+
+---
+
+### Get Users
+**Path:** `/users/getUsers`
+
+**Method:** `GET`
+
+**Returns:**
+- `[user]` (array): Array of all users.
+
+---
+
+## Chat
+
+### Get Chats
+**Path:** `/chats/getChats`
+
+**Method:** `POST`
+
+**Parameters:**
+- `id` (string): The user ID to fetch chats for.
+
+**Returns:**
+- `[chat]` (array): Array of chats where the user is a participant.
+
+---
+
+### Create Chat
+**Path:** `/chats/createChat`
+
+**Method:** `POST`
+
+**Parameters:**
+- `users` (array of strings): Array containing user IDs to create the chat.
+
+**Returns:**
+- `chat` (object): The created chat object.
+
+---
+
+### Get Chat
+**Path:** `/chats/getChat`
+
+**Method:** `POST`
+
+**Parameters:**
+- `id` (string): The chat ID to fetch.
+
+**Returns:**
+- `chat` (object): The requested chat details.
+
+---
+
+### Delete Chat
+**Path:** `/chats/deleteChat`
+
+**Method:** `POST`
+
+**Parameters:**
+- `id` (string): The chat ID to delete.
+
+**Returns:**
+- `message` (string): Confirmation message indicating the chat was deleted.
+
+---
+
+## Message
+
+### Get Messages
+**Path:** `/messages/getMessages`
+
+**Method:** `POST`
+
+**Parameters:**
+- `id` (string): The chat ID to fetch messages for.
+
+**Returns:**
+- `[message]` (array): Array of messages in the chat.
+
+---
+
+### Create Message
+**Path:** `/messages/createMessage`
+
+**Method:** `POST`
+
+**Parameters:**
+- `user` (string): ID of the user sending the message.
+- `chat` (string): ID of the chat to add the message to.
+- `content` (string): The message content.
+
+**Returns:**
+- `message` (object): The created message object.
+
+---
+
+### Get Message
+**Path:** `/messages/getMessage`
+
+**Method:** `POST`
+
+**Parameters:**
+- `id` (string): The message ID to fetch.
+
+**Returns:**
+- `message` (object): The requested message details.
+
+---
+
+### Delete Message
+**Path:** `/messages/deleteMessage`
+
+**Method:** `POST`
+
+**Parameters:**
+- `id` (string): The message ID to delete.
+
+**Returns:**
+- `message` (string): Confirmation message indicating the message was deleted.
+

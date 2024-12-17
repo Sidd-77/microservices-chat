@@ -1,0 +1,30 @@
+{
+  "name": "@messagepunk/models",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "keywords": [],
+  "files": [
+    "dist"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "mongoose": "^8.9.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/mongoose": "^5.11.0"
+  }
+}
