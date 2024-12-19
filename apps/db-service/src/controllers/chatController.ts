@@ -28,6 +28,7 @@ export const createChat = async (
 ): Promise<void> => {
   try {
     const { users } = req.body;
+    console.log(users);
     const existingChat = await Chat.findOne({ users: { $all: users } });
     if (existingChat) {
         res.status(200).json(existingChat);
@@ -38,8 +39,10 @@ export const createChat = async (
       path: "users",
       select: "-password"
     });
+    console.log(chat);
     res.status(201).json(chat);
   } catch (error: any) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };

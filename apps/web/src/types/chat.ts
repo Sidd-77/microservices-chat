@@ -1,8 +1,16 @@
 import { User } from "./auth";
 
 export interface ChatMessage {
-  id: string;
+  _id?: string;
   content: string;
-  sender: User;
-  timestamp: string;
+  sender: string;
+  createdAt: Date;
+  chat: string;
+  receiver: string;
+}
+
+export interface Chat {
+  _id: string;
+  users: User[];
+  messages: ChatMessage[];
 }

@@ -1,52 +1,67 @@
-import React from "react";
-import { Avatar, Button } from "@nextui-org/react";
-import { Search } from "lucide-react";
-
-// Types
-interface Contact {
-  id: string;
-  name: string;
-  avatar: string;
-}
+import { Avatar } from "@nextui-org/react";
+import SearchUser from "../searchUser";
+import { Chat } from "../../types/chat";
 
 interface SidebarProps {
-  contacts: Contact[];
-  onContactSelect: (contact: Contact) => void;
-  selectedContact: Contact | null;
+  chats: Chat[];
+  onContactSelect: (contact: Chat) => void;
+  selectedContact: Chat | null;
+  setUpdateList: (value: boolean) => void;
+  onlineUsers: string[];
+  currentUserId: string;
 }
 
 export function Sidebar({
-  contacts,
+  chats,
   onContactSelect,
   selectedContact,
+  setUpdateList,
+  onlineUsers,
+  currentUserId
 }: SidebarProps) {
   return (
     <div className="flex-grow overflow-y-auto">
       <div className="">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Contacts</h2>
-          <Button variant="ghost" className="p-2 ">
-            <Search size={20} />
-          </Button>
+          <SearchUser setUpdateList={setUpdateList} />
         </div>
-        {contacts.map((contact) => (
-          <div
-            key={contact.id}
-            className={`
-              flex items-center space-x-3 p-2 rounded-md cursor-pointer 
-              transition-colors duration-200 my-2
-              ${
-                selectedContact?.id === contact.id
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-gray-700"
-              }
-            `}
-            onClick={() => onContactSelect(contact)}
-          >
-            <Avatar src={contact.avatar} size="sm" className="shrink-0" />
-            <span className="font-medium truncate">{contact.name}</span>
-          </div>
-        ))}
+        {chats.map((contact) => {
+          const otherUser = contact.users.find(u => u._id !== currentUserId);
+          const isOnline = onlineUsers.includes(otherUser?._id || "");
+          
+          return (
+            <div
+              key={contact._id}
+              className={`
+                flex items-center space-x-3 p-2 rounded-md cursor-pointer 
+                transition-colors duration-200 my-2 relative
+                ${
+                  selectedContact?._id === contact._id
+                    ? "bg-blue-600 text-white"
+                    : "hover:bg-gray-700"
+                }
+              `}
+              onClick={() => onContactSelect(contact)}
+            >
+              <div className="relative">
+                <Avatar src={otherUser?.avatar} size="sm" className="shrink-0" />
+                <div
+                  className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-gray-900 rounded-full
+                    ${isOnline ? "bg-green-500" : "bg-gray-500"}`}
+                />
+              </div>
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="font-medium truncate">
+                  {otherUser?.username || "Unknown User"}
+                </span>
+                <span className="text-xs text-gray-400 truncate">
+                  {isOnline ? "Online" : "Offline"}
+                </span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -5,9 +5,14 @@ import { Send } from "lucide-react";
 interface InputProps {
   onSendMessage: (content: string) => void;
   disabled?: boolean;
+  onInputChange: (content: string) => void;
 }
 
-export function Input({ onSendMessage, disabled = false }: InputProps) {
+export function Input({
+  onSendMessage,
+  disabled = false,
+  onInputChange,
+}: InputProps) {
   const [message, setMessage] = useState("");
 
   const handleSend = () => {
@@ -18,7 +23,7 @@ export function Input({ onSendMessage, disabled = false }: InputProps) {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSend();
     }
   };
@@ -27,16 +32,21 @@ export function Input({ onSendMessage, disabled = false }: InputProps) {
     <div className=" flex space-x-2">
       <NextUIInput
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={(e) => {
+          setMessage(e.target.value);
+          onInputChange(e.target.value);
+        }}
         onKeyDown={handleKeyDown}
-        placeholder={disabled ? "Select a contact to send a message" : "Type a message..."}
+        placeholder={
+          disabled ? "Select a contact to send a message" : "Type a message..."
+        }
         fullWidth
         disabled={disabled}
         className="flex-1"
       />
-      <Button 
-        color="primary" 
-        isIconOnly 
+      <Button
+        color="primary"
+        isIconOnly
         onPress={handleSend}
         disabled={!message.trim() || disabled}
       >

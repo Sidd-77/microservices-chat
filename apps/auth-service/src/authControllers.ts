@@ -28,7 +28,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
 
-    res.status(201).json({ token, username, email, avatar });
+    res.status(201).json({_id:user._id, token, username, email, avatar });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -53,7 +53,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
     const { username, avatar } = user;
 
-    res.status(200).json({ token, username, email, avatar });
+    res.status(200).json({_id:user._id, token, username, email, avatar });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
