@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:latest
+    container_name: messagepunk-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: messagepunk-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+      RABBIMQ_HOSTNAME: rabbitmq
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: messagepunk-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  redis_data:
+  rabbitmq_data:
+  mongodb_data:
+
+networks:
+  app-network:
+    external: true
+    driver: bridge

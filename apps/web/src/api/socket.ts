@@ -3,15 +3,6 @@ import { ChatMessage } from '../types/chat';
 
 const SOCKET_URL = typeof process !== 'undefined' && process.env.SOCKET_URL ? process.env.SOCKET_URL : 'http://localhost:4001';
 
-// interface Message {
-//   _id: string;
-//   chat: string;
-//   user: string;
-//   content: string;
-//   createdAt: string;
-//   updatedAt: string;
-// }
-
 interface TypingStatus {
   chatId: string;
   userId: string;
@@ -29,6 +20,7 @@ export class ChatSocketService {
   private typingHandlers: ((status: TypingStatus) => void)[] = [];
   private userStatusHandlers: ((status: UserStatus) => void)[] = [];
   private onlineUsersHandlers: ((users: string[]) => void)[] = [];
+  private processedMessages: Set<string> = new Set(); // Track processed messages
 
   constructor(baseURL: string = SOCKET_URL) {
     this.socket = io(baseURL, {
@@ -42,15 +34,20 @@ export class ChatSocketService {
   }
 
   private setupSocketListeners(): void {
-    // Message listeners
-    this.socket.on('message:receive', (data: { message: ChatMessage, chatId: string }) => {
-      this.messageHandlers.forEach(handler => handler(data.message));
-      console.log("Message Received : ", data);
-    });
-
-    this.socket.on('message:sent', (data: { message: ChatMessage, chatId: string }) => {
-      this.messageHandlers.forEach(handler => handler(data.message));
-      console.log("Message Send : ", data);
+    // Single message handler for both sent and received messages
+    this.socket.on('message', (data: { message: ChatMessage, chatId: string }) => {
+      // Check if we've already processed this message
+      if (!this.processedMessages.has(data.message._id || "killlme")) {
+        this.processedMessages.add(data.message._id || "killlme");
+        this.messageHandlers.forEach(handler => handler(data.message));
+        console.log("Message handled:", data);
+        
+        // Cleanup old processed messages (optional)
+        if (this.processedMessages.size > 1000) {
+          const oldest = Array.from(this.processedMessages).slice(0, 500);
+          oldest.forEach(id => this.processedMessages.delete(id));
+        }
+      }
     });
 
     // Typing status listener
@@ -71,11 +68,14 @@ export class ChatSocketService {
     // Connection error handling
     this.socket.on('connect_error', (error) => {
       console.error('Socket connection error:', error);
-      // Implement your error handling logic here
+    });
+
+    // Cleanup processed messages on disconnect
+    this.socket.on('disconnect', () => {
+      this.processedMessages.clear();
     });
   }
 
-  // Connection management
   public connect(userId: string): void {
     if (!this.socket.connected) {
       this.socket.connect();
@@ -84,10 +84,10 @@ export class ChatSocketService {
   }
 
   public disconnect(): void {
+    this.processedMessages.clear();
     this.socket.disconnect();
   }
 
-  // Message handling
   public sendMessage(data: {
     chatId: string;
     content: string;
@@ -96,6 +96,8 @@ export class ChatSocketService {
     _id: string;
     createdAt: Date;
   }): void {
+    // Add message to processed set before sending
+    this.processedMessages.add(data._id);
     this.socket.emit('message:new', data);
   }
 
@@ -106,7 +108,6 @@ export class ChatSocketService {
     };
   }
 
-  // Typing status
   public sendTypingStatus(chatId: string, userId: string, isTyping: boolean): void {
     this.socket.emit(
       isTyping ? 'typing:start' : 'typing:stop',
@@ -121,7 +122,6 @@ export class ChatSocketService {
     };
   }
 
-  // User status handling
   public onUserStatus(handler: (status: UserStatus) => void): () => void {
     this.userStatusHandlers.push(handler);
     return () => {
@@ -129,7 +129,6 @@ export class ChatSocketService {
     };
   }
 
-  // Online users handling
   public onOnlineUsers(handler: (users: string[]) => void): () => void {
     this.onlineUsersHandlers.push(handler);
     return () => {
@@ -137,9 +136,7 @@ export class ChatSocketService {
     };
   }
 
-  // Connection status
   public isConnected(): boolean {
     return this.socket.connected;
   }
 }
-

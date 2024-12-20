@@ -8,13 +8,6 @@ export const getChats = async (req: Request, res: Response): Promise<void> => {
       .populate({
       path: "users",
       select: "-password"
-      })
-      .populate({
-      path: "messages",
-      populate: {
-        path: "user",
-        select: "-password"
-      }
       });
     res.json(chats);
   } catch (error: any) {

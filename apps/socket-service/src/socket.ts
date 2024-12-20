@@ -1,14 +1,26 @@
 import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
+import Redis from "ioredis";
+import MessageQueue from "./messageQueue";
 
 interface OnlineUser {
   userId: string;
   socketId: string;
 }
 
+const CHANNELS = {
+  MESSAGE: "message",
+  TYPING: "typing",
+};
+
+const RedisURL = process.env.REDIS_URL || "redis://localhost:6379";
+
 export class SocketService {
   private io: Server;
+  private publisher: Redis;
+  private subscriber: Redis;
   private onlineUsers: OnlineUser[] = [];
+  private messageQueue: MessageQueue;
 
   constructor(httpServer: HttpServer) {
     this.io = new Server(httpServer, {
@@ -18,25 +30,65 @@ export class SocketService {
       },
     });
 
+    this.publisher = new Redis(RedisURL);
+    this.subscriber = new Redis(RedisURL);
+
+    this.setupRedisSubscribers();
     this.setupSocketHandlers();
+
+    this.messageQueue = new MessageQueue();
+  }
+
+  private setupRedisSubscribers(): void {
+    this.subscriber.subscribe(CHANNELS.MESSAGE, (err) => {
+      if (err) {
+        console.error("Failed to subscribe to message channel:", err);
+        return;
+      }
+      console.log("Subscribed to message channel");
+    });
+
+    this.subscriber.subscribe(CHANNELS.TYPING, (err) => {
+      if (err) {
+        console.error("Failed to subscribe to typing channel:", err);
+        return;
+      }
+      console.log("Subscribed to typing channel");
+    });
+
+    this.subscriber.on("message", (channel, message) => {
+      try {
+        const data = JSON.parse(message);
+
+        switch (channel) {
+          case CHANNELS.MESSAGE:
+            this.handleRedisMessage(data);
+            break;
+          case CHANNELS.TYPING:
+            this.handleRedisTyping(data);
+            break;
+          default:
+            console.warn("Unknown channel:", channel);
+        }
+      } catch (error) {
+        console.error("Error processing Redis message:", error);
+      }
+    });
   }
 
   private setupSocketHandlers(): void {
     this.io.on("connection", (socket) => {
       console.log("New client connected");
 
-      // Handle user connection
       socket.on("user:connect", (userId: string) => {
         this.handleUserConnect(socket.id, userId);
         console.log("User connected:", userId);
       });
 
-      // Handle user disconnection
       socket.on("disconnect", () => {
         this.handleUserDisconnect(socket.id);
       });
 
-      // Handle new message
       socket.on(
         "message:new",
         async (data: {
@@ -44,6 +96,7 @@ export class SocketService {
           content: string;
           sender: string;
           receiver: string;
+          _id: string;
           createdAt: Date;
         }) => {
           console.log("New message:", data);
@@ -51,33 +104,37 @@ export class SocketService {
         }
       );
 
-      // Handle typing status
-      socket.on("typing:start", (data: { chatId: string; userId: string }) => {
-        this.handleTypingStatus(data, true);
-      });
+      socket.on(
+        "typing:start",
+        async (data: { chatId: string; userId: string }) => {
+          await this.handleTypingStatus(data, true);
+        }
+      );
 
-      socket.on("typing:stop", (data: { chatId: string; userId: string }) => {
-        this.handleTypingStatus(data, false);
-      });
+      socket.on(
+        "typing:stop",
+        async (data: { chatId: string; userId: string }) => {
+          await this.handleTypingStatus(data, false);
+        }
+      );
     });
   }
 
   private handleUserConnect(socketId: string, userId: string): void {
-    // Remove any existing socket connections for this user
+    // Remove any existing connections for this user
     this.onlineUsers = this.onlineUsers.filter(
       (user) => user.userId !== userId
     );
 
-    // Add new connection
     this.onlineUsers.push({ userId, socketId });
 
-    // Broadcast user online status
+    // Notify all users about the new online user
     this.io.emit("user:status", {
       userId,
       status: "online",
     });
 
-    // Send initial online users list to the connected user
+    // Send current online users list to the newly connected user
     const onlineUserIds = this.onlineUsers.map((user) => user.userId);
     this.io.to(socketId).emit("users:online", onlineUserIds);
   }
@@ -92,7 +149,6 @@ export class SocketService {
         (user) => user.socketId !== socketId
       );
 
-      // Broadcast user offline status
       this.io.emit("user:status", {
         userId: disconnectedUser.userId,
         status: "offline",
@@ -105,65 +161,65 @@ export class SocketService {
     content: string;
     sender: string;
     receiver: string;
+    _id: string;
     createdAt: Date;
   }): Promise<void> {
     try {
-      // Create new message in database
-      // const newMessage = await Message.create({
-      //   chat: data.chatId,
-      //   user: data.userId,
-      //   content: data.content,
-      // });
-
-      // Update chat with latest message
-      // await Chat.findByIdAndUpdate(data.chatId, {
-      //   $push: { messages: newMessage._id },
-      //   latest_message: newMessage._id,
-      // });
-
-      // Get receiver's socket
-      const receiverSocket = this.onlineUsers.find(
-        (user) => user.userId === data.receiver
-      );
-
-      console.log(this.onlineUsers);
-
-      // Emit message to sender and receiver
-      if (receiverSocket) {
-        this.io.to(receiverSocket.socketId).emit("message:receive", {
-          message: data,
-          chatId: data.chatId,
-        });
-      }
-
-      const senderSocket = this.onlineUsers.find(
-        (user) => user.userId === data.sender
-      );
-
-      if (senderSocket) {
-        this.io.to(senderSocket.socketId).emit("message:sent", {
-          message: data,
-          chatId: data.chatId,
-        });
-      }
+      // Publish message to Redis
+      await this.publisher.publish(CHANNELS.MESSAGE, JSON.stringify(data));
+      await this.messageQueue.pushMessage(data);
     } catch (error) {
-      console.error("Error handling new message:", error);
+      console.error("Error publishing message to Redis:", error);
     }
   }
 
-  private handleTypingStatus(
-    data: { chatId: string; userId: string },
-    isTyping: boolean
-  ): void {
-    // Broadcast typing status to all users in the chat
-    this.io.emit("typing:status", {
-      chatId: data.chatId,
-      userId: data.userId,
-      isTyping,
+  private handleRedisMessage(data: {
+    chatId: string;
+    content: string;
+    sender: string;
+    receiver: string;
+    _id: string;
+    createdAt: Date;
+  }): void {
+    // Send a single 'message' event to all relevant users
+    const relevantUsers = this.onlineUsers.filter(
+      (user) => user.userId === data.sender || user.userId === data.receiver
+    );
+
+    relevantUsers.forEach((user) => {
+      this.io.to(user.socketId).emit("message", {
+        message: data,
+        chatId: data.chatId,
+      });
     });
   }
 
-  // Public methods that can be used by other services
+  private async handleTypingStatus(
+    data: { chatId: string; userId: string },
+    isTyping: boolean
+  ): Promise<void> {
+    try {
+      await this.publisher.publish(
+        CHANNELS.TYPING,
+        JSON.stringify({ ...data, isTyping })
+      );
+    } catch (error) {
+      console.error("Error publishing typing status to Redis:", error);
+    }
+  }
+
+  private handleRedisTyping(data: {
+    chatId: string;
+    userId: string;
+    isTyping: boolean;
+  }): void {
+    this.io.emit("typing:status", {
+      chatId: data.chatId,
+      userId: data.userId,
+      isTyping: data.isTyping,
+    });
+  }
+
   public getUserStatus(userId: string): "online" | "offline" {
     return this.onlineUsers.some((user) => user.userId === userId)
       ? "online"
@@ -174,7 +230,6 @@ export class SocketService {
     return this.onlineUsers.map((user) => user.userId);
   }
 
-  // Method to emit custom events
   public emitToUser(userId: string, event: string, data: any): void {
     const userSocket = this.onlineUsers.find((user) => user.userId === userId);
     if (userSocket) {

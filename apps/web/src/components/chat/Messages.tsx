@@ -36,7 +36,7 @@ export function Messages({ messages: initialMessages, selectedChat, currentUserI
 
     // Handle incoming messages
     const messageHandler = (message: ChatMessage) => {
-      if (message.chat === selectedChat._id) {
+      if (message.chatId === selectedChat._id) {
         setMessages(prev => [...prev, message]);
       }
     };
