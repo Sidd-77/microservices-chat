@@ -181,17 +181,29 @@ export class SocketService {
     _id: string;
     createdAt: Date;
   }): void {
-    // Send a single 'message' event to all relevant users
+    // Get all relevant users
     const relevantUsers = this.onlineUsers.filter(
       (user) => user.userId === data.sender || user.userId === data.receiver
     );
 
-    relevantUsers.forEach((user) => {
-      this.io.to(user.socketId).emit("message", {
-        message: data,
-        chatId: data.chatId,
+    // Send message to online users
+    if (relevantUsers.length > 0) {
+      relevantUsers.forEach((user) => {
+        this.io.to(user.socketId).emit("message", {
+          message: data,
+          chatId: data.chatId,
+        });
       });
-    });
+    }
+
+    // Check if receiver is offline and send notification
+    const isReceiverOffline = !this.onlineUsers.some(
+      (user) => user.userId === data.receiver
+    );
+    if (isReceiverOffline) {
+      console.log("Receiver is offline, sending notification");
+      this.messageQueue.pushNotification(data);
+    }
   }
 
   private async handleTypingStatus(

@@ -1,4 +1,3 @@
-import React from "react";
 import { Avatar, Button } from "@nextui-org/react";
 import { LogOut, Settings } from "lucide-react";
 import { User as UserType } from "../../types/auth";
@@ -10,6 +9,7 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/modal";
+import NotificationSubscribe from "../notificationSubscript";
 
 interface ProfileProps {
   user: UserType | null;
@@ -57,11 +57,13 @@ export function Profile({ user, logout }: ProfileProps) {
               </ModalHeader>
               <ModalBody className="flex flex-col items-center space-y-4">
                 <div className="flex space-x-4">
+                  <NotificationSubscribe userId={user?._id || ""} />
                   <Button
                     color="danger"
                     variant="solid"
                     onPress={() => {
                       logout();
+                      localStorage.setItem("pushSubscriptionId", "");
                       onClose();
                     }}
                   >

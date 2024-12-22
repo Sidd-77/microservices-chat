@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import Home from "./pages/Home";
