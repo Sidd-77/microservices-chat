@@ -6,6 +6,7 @@ export interface ChatMessage {
   sender: string;
   createdAt: Date;
   chatId: string;
+  isfile: boolean;
   receiver: string;
 }
 

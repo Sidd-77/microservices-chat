@@ -97,6 +97,7 @@ export class SocketService {
           sender: string;
           receiver: string;
           _id: string;
+          isfile: boolean;
           createdAt: Date;
         }) => {
           console.log("New message:", data);
@@ -162,6 +163,7 @@ export class SocketService {
     sender: string;
     receiver: string;
     _id: string;
+    isfile: boolean;
     createdAt: Date;
   }): Promise<void> {
     try {
@@ -179,6 +181,7 @@ export class SocketService {
     sender: string;
     receiver: string;
     _id: string;
+    isfile: boolean;
     createdAt: Date;
   }): void {
     // Get all relevant users

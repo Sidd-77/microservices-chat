@@ -71,7 +71,7 @@ export default function ChatPage() {
     }
   };
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = (content: string, isfile:boolean) => {
     if (!selectedContact?.users || !user) return;
     const receiverId =
       selectedContact.users.find((u) => u._id !== user._id)?._id || "null";
@@ -79,13 +79,12 @@ export default function ChatPage() {
       chatId: selectedContact._id,
       content,
       sender: user._id,
+      isfile,
       receiver: receiverId,
       _id: uuidv4(),
       createdAt: new Date(),
     };
-    // Optimistically add the message to the UI
     setMessages((prev) => [...prev, newMessage]);
-    // Send via socket
     chatSocket.sendMessage(newMessage);
   };
 
@@ -94,14 +93,12 @@ export default function ChatPage() {
     chatSocket.sendTypingStatus(selectedContact._id, user._id, isTyping);
   };
 
-  // Socket connection effect
   useEffect(() => {
     if (!user?._id) return;
 
     chatSocket.connect(user._id);
 
     const messageUnsubscribe = chatSocket.onMessage((message) => {
-      // Only add message if it belongs to the currently selected chat
       setMessages((prev) => {
         if (selectedContact && message.chatId === selectedContact._id) {
           return [...prev, message];
@@ -137,9 +134,8 @@ export default function ChatPage() {
       userStatusUnsubscribe();
       chatSocket.disconnect();
     };
-  }, [user?._id]); // Remove selectedContact from dependencies
+  }, [user?._id]); 
 
-  // Load chats effect
   useEffect(() => {
     if (user?._id) {
       getChats(user._id).then((res) => {

@@ -19,8 +19,8 @@ export const createMessage = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { sender, receiver, chatId, content, _id, createdAt } = req.body;
-    const message = await Message.create({ sender, receiver, chatId, content, _id, createdAt });
+    const { sender, receiver, chatId, isfile, content, _id, createdAt } = req.body;
+    const message = await Message.create({ sender, receiver, chatId, isfile, content, _id, createdAt });
     res.status(201).json(message);
   } catch (error: any) {
     res.status(500).json({ message: error.message });

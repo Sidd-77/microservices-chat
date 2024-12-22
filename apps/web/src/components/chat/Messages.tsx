@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Avatar } from "@nextui-org/react";
+import { useEffect, useRef, useState } from "react";
+import { Avatar, Button } from "@nextui-org/react";
 import { ChatSocketService } from "../../api/socket";
 import { ChatMessage } from "../../types/chat";
+import { FileIcon, Download } from "lucide-react";
+import { getFileUrl } from "../../api/files";
 
 interface MessagesProps {
   messages: ChatMessage[];
@@ -21,27 +23,24 @@ export function Messages({ messages: initialMessages, selectedChat, currentUserI
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     setMessages(initialMessages);
   }, [initialMessages]);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Socket listeners
   useEffect(() => {
     if (!selectedChat || !socketService) return;
 
-    // Handle incoming messages
     const messageHandler = (message: ChatMessage) => {
       if (message.chatId === selectedChat._id) {
         setMessages(prev => [...prev, message]);
       }
     };
 
-    // Handle typing status
     const typingHandler = ({ chatId, userId, isTyping }: { 
       chatId: string; 
       userId: string; 
@@ -60,7 +59,6 @@ export function Messages({ messages: initialMessages, selectedChat, currentUserI
       }
     };
 
-    // Subscribe to socket events
     const unsubscribeMessage = socketService.onMessage(messageHandler);
     const unsubscribeTyping = socketService.onTypingStatus(typingHandler);
 
@@ -70,6 +68,37 @@ export function Messages({ messages: initialMessages, selectedChat, currentUserI
       setTypingUsers(new Set());
     };
   }, [selectedChat, socketService, currentUserId]);
+
+  const handleFileDownload = async (fileName: string) => {
+    try {
+      const url = await getFileUrl(fileName);
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Failed to download file:', error);
+    }
+  };
+
+  const MessageContent = ({ message }: { message: ChatMessage }) => {
+    if (message.isfile) {
+      const fileName = message.content.split('§')[1];
+      const displayName = fileName.substring(fileName.indexOf('-') + 1);
+      return (
+        <div className="flex items-center space-x-2">
+          <FileIcon size={20} />
+          <span className="flex-1 truncate">{displayName}</span>
+          <Button
+            size="sm"
+            isIconOnly
+            variant="flat"
+            onPress={() => handleFileDownload(fileName)}
+          >
+            <Download size={16} />
+          </Button>
+        </div>
+      );
+    }
+    return <div className="text-sm">{message.content}</div>;
+  };
 
   if (!selectedChat) {
     return (
@@ -84,7 +113,7 @@ export function Messages({ messages: initialMessages, selectedChat, currentUserI
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-900">
       {messages.map((message) => {
-        const isCurrentUser = message.sender == currentUserId;
+        const isCurrentUser = message.sender === currentUserId;
         return (
           <div 
             key={message._id}
@@ -103,9 +132,10 @@ export function Messages({ messages: initialMessages, selectedChat, currentUserI
                 ${isCurrentUser 
                   ? 'bg-blue-600 text-white self-end' 
                   : 'bg-gray-700 text-white self-start'}
+                ${message.isfile ? 'min-w-[200px]' : ''}
               `}
             >
-              <div className="text-sm">{message.content}</div>
+              <MessageContent message={message} />
               <div className="text-xs text-gray-300 mt-1 text-right">
                 {new Date(message.createdAt).toLocaleTimeString()}
               </div>

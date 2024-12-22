@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";

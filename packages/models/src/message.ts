@@ -5,6 +5,7 @@ const messageSchema = new Schema({
   sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
   chatId: { type: Schema.Types.ObjectId, ref: "Chat", required: true },
   receiver: { type: Schema.Types.ObjectId, ref: "Chat", required: true },
+  isfile: { type: Boolean, default: false },
   content: { type: String, required: true },
   createdAt: { type: String, required: true },
 }, { timestamps: true });

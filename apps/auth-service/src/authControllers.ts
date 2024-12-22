@@ -7,7 +7,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "development_secret";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, email, password, avatar } = req.body;
+    const { username, email, password } = req.body;
+    const avatar = "https://robohash.org/"+email;
 
     const userExists = await User.findOne({ email });
 

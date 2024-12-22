@@ -94,6 +94,7 @@ export class ChatSocketService {
     sender: string;
     receiver: string;
     _id: string;
+    isfile: boolean;
     createdAt: Date;
   }): void {
     // Add message to processed set before sending
