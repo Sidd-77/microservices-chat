@@ -1,32 +1,38 @@
+# Stage 1: Builder
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Copy all package.json files
 COPY package.json package-lock.json* ./
 COPY apps/auth-service/package.json ./apps/auth-service/
+COPY apps/db-service/package.json ./apps/db-service/
 COPY packages/models/package.json ./packages/models/
 
-RUN npm install -g tsc
+# Install dependencies
 RUN npm ci
 
-RUN npm install
+# Copy the entire source code
+COPY . .
 
+# Build models
 WORKDIR /app/packages/models
 RUN npm run build
 
+# Build db-service
 WORKDIR /app/apps/db-service
 RUN npm run build
 
+# Stage 2: Production
 FROM node:20-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/package.json /app/package-lock.json* ./
-COPY --from=builder /app/apps/db-service/package.json ./apps/db-service/
-COPY --from=builder /app/packages/models/package.json ./packages/models/
+# Copy only production dependencies
+COPY package.json package-lock.json* ./
+COPY --from=builder /app/node_modules ./node_modules
 
-RUN npm ci --only=production
-
+# Copy the built code
 COPY --from=builder /app/packages/models/dist ./packages/models/dist
 COPY --from=builder /app/apps/db-service/dist ./apps/db-service/dist
 
