@@ -2,10 +2,13 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+
+
 COPY package.json package-lock.json* ./
 COPY apps/auth-service/package.json ./apps/auth-service/
 COPY packages/models/package.json ./packages/models/
 
+RUN npm install -g tsc
 RUN npm ci
 
 COPY . .
