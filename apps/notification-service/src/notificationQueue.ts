@@ -14,7 +14,7 @@ export class NotificationQueue {
       this.connection = await amqp.connect(this.RABBITMQ_URL);
 
       // Handle connection errors and closure
-      this.connection.on("error", (err) => {
+      this.connection.on("error", (err:any) => {
         console.error("RabbitMQ connection error:", err);
         this.handleConnectionError();
       });
@@ -89,7 +89,7 @@ export class NotificationQueue {
           noAck: false, // Enable manual acknowledgment
         },
       );
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error setting up message consumer:", error);
       // Attempt to reconnect
       this.handleConnectionError();
@@ -102,7 +102,7 @@ export class NotificationQueue {
       await this.connection?.close();
       this.isInitialized = false;
       console.log("RabbitMQ connections closed");
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error closing RabbitMQ connections:", error);
     }
   }

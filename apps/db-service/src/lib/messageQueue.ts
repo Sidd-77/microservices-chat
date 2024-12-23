@@ -14,7 +14,7 @@ export class MessageQueue {
       this.connection = await amqp.connect(this.RABBITMQ_URL);
 
       // Handle connection errors and closure
-      this.connection.on("error", (err) => {
+      this.connection.on("error", (err:any) => {
         console.error("RabbitMQ connection error:", err);
         this.handleConnectionError();
       });
