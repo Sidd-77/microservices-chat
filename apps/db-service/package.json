@@ -20,7 +20,7 @@
   "description": "",
   "dependencies": {
     "@messagepunk/models": "*",
-    "@types/dotenv": "^6.1.1",
+    "@types/amqplib": "^0.10.6",
     "amqplib": "^0.10.5",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -31,7 +31,6 @@
     "mongoose": "^8.9.0"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.10.6",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
