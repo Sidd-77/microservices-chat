@@ -21,6 +21,7 @@
   "dependencies": {
     "@messagepunk/models": "*",
     "@types/amqplib": "^0.10.6",
+    "@types/dotenv": "^6.1.1",
     "amqplib": "^0.10.5",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",

@@ -10,10 +10,11 @@
   },
   "dependencies": {
     "@messagepunk/models": "*",
+    "@types/amqplib": "^0.10.6",
     "@types/mongoose": "^5.11.96",
     "@types/web-push": "^3.6.4",
-    "cors": "^2.8.5",
     "amqplib": "^0.10.5",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.9.2",
