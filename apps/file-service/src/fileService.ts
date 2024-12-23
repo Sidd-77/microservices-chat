@@ -5,7 +5,7 @@ export class FileService {
   private bucket: string;
 
   constructor() {
-    this.bucket = process.env.AWS_BUCKET || 'messagepunk';
+    this.bucket = process.env.S3_BUCKET || 'messagepunk';
   }
 
   async uploadFile(file: Express.Multer.File) {

@@ -25,7 +25,7 @@ class MessageQueue {
           durable: true,
         });
         console.log(
-          `Waiting for messages in ${messageQueue}. To exit press CTRL+C`,
+          `Waiting for messages in ${messageQueue}...`,
         );
         this.connection = connection;
         this.channel = channel;
@@ -37,7 +37,7 @@ class MessageQueue {
         ch.assertQueue(notificationQueue, {
           durable: true,
         });
-        console.log(`Waitting for notification in ${notificationQueue}.`);
+        console.log(`Waitting for notification in ${notificationQueue}...`);
         this.notificationchannel = ch;
       });
     });

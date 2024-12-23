@@ -10,7 +10,15 @@ import MessageQueue from "./lib/messageQueue";
 import { Message } from "@messagepunk/models";
 
 const app = express();
-app.use(cors());
+app.use(cors(
+  {
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  }
+));
+
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
@@ -43,12 +51,12 @@ async function initializeServices() {
   }
 }
 
-app.use("/users", userRoutes);
-app.use("/chats", chatRoutes);
-app.use("/messages", messageRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/chats", chatRoutes);
+app.use("/api/messages", messageRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Hello World from db-service");
+app.get("/health", (req, res) => {
+  res.send("DB Service is running...");
 });
 
 connectDB()

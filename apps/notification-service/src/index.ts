@@ -10,16 +10,16 @@ import mongoose from "mongoose";
 import NotificationQueue from "./notificationQueue";
 import { sendNotificationToUser } from "./subscriptionService";
 
-const app:Express = express();
+const app: Express = express();
 const notificationQueue = new NotificationQueue();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 4400;
 
 app.use(
   cors({
-    origin: [process.env.ORIGIN || "http://localhost:5173"],
+    origin: "*",
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
-  }),
+  })
 );
 
 app.use(express.json());
@@ -60,32 +60,22 @@ async function initializeServices() {
   }
 }
 
-
-// heatlh check
 app.get("/health", (req: Request, res: Response) => {
-  res.status(200).json({
-    status: "healthy",
-    uptime: process.uptime(),
-    timestamp: Date.now(),
-    service: "notification-service",
-  });
+  res.send("Notification service is running...");
 });
 
 app.use("/api", subscriptionRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  mongoose.connect("mongodb://localhost:27017/db").then(() => {
-    console.log("Connected to MongoDB");
-  }
-  ).catch((err) => {
-    console.error("Error connecting to MongoDB", err);
-  });
-  console.log("CORS enabled for:", ["http://localhost:3000"]);
-  console.log("Available routes:");
-  console.log("- GET /health");
-  console.log("- POST /api/subscribe");
-  console.log("- POST /api/push-notification");
+  mongoose
+    .connect("mongodb://localhost:27017/db")
+    .then(() => {
+      console.log("Connected to MongoDB");
+      console.log(`Server is running on port ${PORT}`);
+    })
+    .catch((err) => {
+      console.error("Error connecting to MongoDB", err);
+    });
   initializeServices().catch(console.error);
 });
 

@@ -18,7 +18,6 @@ const SubscriptionSchema = new Schema<Subscription>({
   createdAt: { type: Date, default: Date.now }
 });
 
-// Create indexes for faster queries
 SubscriptionSchema.index({ userId: 1 });
 SubscriptionSchema.index({ endpoint: 1 }, { unique: true });
 

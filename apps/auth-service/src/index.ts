@@ -6,15 +6,23 @@ import router from "./authRoutes";
 import { connectDB } from "./db";
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  })
+);
+
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 
-app.use("/auth", router);
+app.use("/api/auth", router);
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
+app.get("/health", (req, res) => {
+  res.send("Auth service is running...");
 });
 
 connectDB()

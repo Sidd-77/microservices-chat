@@ -13,6 +13,7 @@
 - `avatar` (string, optional): URL or identifier for the user’s avatar.
 
 **Returns:**
+- `_id` (string): Unique id of user
 - `token` (string): JWT token for authentication.
 - `username` (string): The registered username.
 - `email` (string): The registered email address.
@@ -29,6 +30,7 @@
 - `password` (string): The password for the user account.
 
 **Returns:**
+- `_id` (string): Unique id of user
 - `token` (string): JWT token for authentication.
 - `username` (string): The username associated with the account.
 - `email` (string): The email address associated with the account.

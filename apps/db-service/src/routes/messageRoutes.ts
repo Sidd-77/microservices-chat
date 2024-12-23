@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { createMessage, getMessage, getMessages, deleteMessage } from "../controllers/messageController";
-import { get } from "http";
 
 const router: import("express").Router = Router();
 

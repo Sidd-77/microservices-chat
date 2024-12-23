@@ -1,5 +1,5 @@
-export const API_BASE_URL = 'http://localhost:8000';
-export const VAPID_PUBLIC_KEY = "BEQgZOfxmlUwwQTVVeVUV7HDghCPuN6o19X2bvZzoThX8tbyge0TLFQ6Iz0_TUpL6rQhcw05eayg-qKwde43fQE";
+import { NOTIFICATION_URL } from "../config/env";
+import { VAPID_PUBLIC_KEY } from "../config/env";
 
 export async function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
@@ -36,7 +36,7 @@ export async function subscribeToPushNotifications(
     });
 
     // Send subscription to backend with additional info
-    const response = await fetch(`${API_BASE_URL}/api/subscribe`, {
+    const response = await fetch(`${NOTIFICATION_URL}/api/subscribe`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

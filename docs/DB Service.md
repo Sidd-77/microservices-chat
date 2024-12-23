@@ -3,7 +3,7 @@
 ## User
 
 ### Search Users
-**Path:** `/users/searchUsers`
+**Path:** `/api/users/searchUsers`
 
 **Method:** `POST`
 
@@ -16,7 +16,7 @@
 ---
 
 ### Get User
-**Path:** `/users/getUser`
+**Path:** `/api/users/getUser`
 
 **Method:** `POST`
 
@@ -29,7 +29,7 @@
 ---
 
 ### Get Users
-**Path:** `/users/getUsers`
+**Path:** `/api/users/getUsers`
 
 **Method:** `GET`
 
@@ -41,7 +41,7 @@
 ## Chat
 
 ### Get Chats
-**Path:** `/chats/getChats`
+**Path:** `/api/chats/getChats`
 
 **Method:** `POST`
 
@@ -54,7 +54,7 @@
 ---
 
 ### Create Chat
-**Path:** `/chats/createChat`
+**Path:** `/api/chats/createChat`
 
 **Method:** `POST`
 
@@ -67,7 +67,7 @@
 ---
 
 ### Get Chat
-**Path:** `/chats/getChat`
+**Path:** `/api/chats/getChat`
 
 **Method:** `POST`
 
@@ -80,7 +80,7 @@
 ---
 
 ### Delete Chat
-**Path:** `/chats/deleteChat`
+**Path:** `/api/chats/deleteChat`
 
 **Method:** `POST`
 
@@ -95,12 +95,12 @@
 ## Message
 
 ### Get Messages
-**Path:** `/messages/getMessages`
+**Path:** `/api/messages/getMessages`
 
 **Method:** `POST`
 
 **Parameters:**
-- `id` (string): The chat ID to fetch messages for.
+- `chatId` (string): The chat ID to fetch messages for.
 
 **Returns:**
 - `[message]` (array): Array of messages in the chat.
@@ -108,14 +108,18 @@
 ---
 
 ### Create Message
-**Path:** `/messages/createMessage`
+**Path:** `/api/messages/createMessage`
 
 **Method:** `POST`
 
 **Parameters:**
-- `user` (string): ID of the user sending the message.
-- `chat` (string): ID of the chat to add the message to.
+- `sender` (string): ID of the user sending the message.
+- `receiver` (string): ID of the user receiving the message.
+- `chatId` (string): ID of the chat to add the message to.
+- `isfile` (boolean): Indicates if the message contains a file.
 - `content` (string): The message content.
+- `_id` (string): The unique ID of the message.
+- `createdAt` (string): The timestamp when the message was created.
 
 **Returns:**
 - `message` (object): The created message object.
@@ -123,12 +127,12 @@
 ---
 
 ### Get Message
-**Path:** `/messages/getMessage`
+**Path:** `/api/messages/getMessage`
 
 **Method:** `POST`
 
 **Parameters:**
-- `id` (string): The message ID to fetch.
+- `_id` (string): The message ID to fetch.
 
 **Returns:**
 - `message` (object): The requested message details.
@@ -136,12 +140,12 @@
 ---
 
 ### Delete Message
-**Path:** `/messages/deleteMessage`
+**Path:** `/api/messages/deleteMessage`
 
 **Method:** `POST`
 
 **Parameters:**
-- `id` (string): The message ID to delete.
+- `_id` (string): The message ID to delete.
 
 **Returns:**
 - `message` (string): Confirmation message indicating the message was deleted.

@@ -24,7 +24,6 @@ export const FilePicker = ({ onSelect, disabled = false }: FilePickerProps) => {
       onSelect(messageContent);
     } catch (error) {
       console.error('Error uploading file:', error);
-      // TODO: Add toast notification for error
     } finally {
       setIsUploading(false);
       // Reset the input

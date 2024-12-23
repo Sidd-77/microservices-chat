@@ -4,8 +4,7 @@ import {
   subscribeToPushNotifications,
 } from "../lib/notificationHelper";
 import { Button } from "@nextui-org/react";
-
-const NOTIFICATION_URL = typeof process !== 'undefined' && process.env.NOTIFICATION_URL ? process.env.NOTIFICATION_URL : 'http://localhost:8000';
+import { NOTIFICATION_URL } from "../config/env";
 
 export default function NotificationSubscribe({ userId }: { userId: string }) {
   const [isSubscribed, setIsSubscribed] = useState(false);

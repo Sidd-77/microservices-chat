@@ -1,10 +1,12 @@
-// notificationService.ts (Frontend)
+import { VAPID_PUBLIC_KEY } from "../config/env";
+import { NOTIFICATION_URL } from "../config/env";
+
 export class NotificationService {
   private static instance: NotificationService;
   private vapidPublicKey: string;
 
   private constructor() {
-    this.vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+    this.vapidPublicKey = VAPID_PUBLIC_KEY;
   }
 
   static getInstance() {
@@ -58,8 +60,7 @@ export class NotificationService {
         },
       };
 
-      // Send subscription to your backend
-      const response = await fetch("http://localhost:3003/subscribe", {
+      const response = await fetch(`${NOTIFICATION_URL}/api/subscribe`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

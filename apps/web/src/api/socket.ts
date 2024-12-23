@@ -1,7 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { ChatMessage } from '../types/chat';
-
-const SOCKET_URL = typeof process !== 'undefined' && process.env.SOCKET_URL ? process.env.SOCKET_URL : 'http://localhost:4001';
+import { SOCKET_URL } from '../config/env';
 
 interface TypingStatus {
   chatId: string;
@@ -41,8 +40,7 @@ export class ChatSocketService {
         this.processedMessages.add(data.message._id || "killlme");
         this.messageHandlers.forEach(handler => handler(data.message));
         console.log("Message handled:", data);
-        
-        // Cleanup old processed messages (optional)
+        // Cleanup old processed messages
         if (this.processedMessages.size > 1000) {
           const oldest = Array.from(this.processedMessages).slice(0, 500);
           oldest.forEach(id => this.processedMessages.delete(id));
