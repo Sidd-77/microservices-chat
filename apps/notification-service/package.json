@@ -9,7 +9,6 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@messagepunk/models": "*",
     "@types/amqplib": "^0.10.6",
     "@types/mongoose": "^5.11.96",
     "@types/web-push": "^3.6.4",
