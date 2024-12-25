@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Chat from "./pages/Chat";
+import NotFoundPage from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </NextUIProvider>
