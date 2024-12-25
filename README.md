@@ -1,4 +1,4 @@
 # Microservices Chat Application
 
 
-[View on Eraser![](https://app.eraser.io/workspace/3M7Q9DUcK9H6AYxxaxmu/preview)](https://app.eraser.io/workspace/3M7Q9DUcK9H6AYxxaxmu)
+![diagram-export-12-25-2024-5_26_00-PM](https://github.com/user-attachments/assets/fed8adf5-1b7f-4704-a981-e91eb48232d3)
