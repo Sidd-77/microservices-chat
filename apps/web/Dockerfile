@@ -11,6 +11,13 @@ RUN npm ci
 
 COPY . .
 
+ENV VITE_AUTH_URL="http://auth-service:4000" \
+    VITE_DB_URL="http://db-service:4100" \
+    VITE_SOCKET_URL="http://socket-service:4200" \
+    VITE_FILE_URL="http://file-service:4300" \
+    VITE_NOTIFICATION_URL="http://notification-service:4400" \
+    VITE_VAPID_PUBLIC_KEY=${VITE_VAPID_PUBLIC_KEY}
+
 WORKDIR /app/packages/models
 RUN npm run build
 

@@ -39,6 +39,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
+        env:
+          VITE_VAPID_PUBLIC_KEY: ${{ secrets.VITE_VAPID_PUBLIC_KEY }}
         uses: docker/build-push-action@v6
         with:
           context: .
