@@ -31,6 +31,6 @@ COPY --from=builder /app/apps/notification-service/dist ./apps/notification-serv
 
 WORKDIR /app/apps/notification-service
 
-EXPOSE 4000
+EXPOSE 4400
 
 CMD ["node", "dist/index.js"]

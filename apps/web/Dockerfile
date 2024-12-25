@@ -1,3 +1,4 @@
+# Stage 1: Build the application
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -16,21 +17,16 @@ RUN npm run build
 WORKDIR /app/apps/web
 RUN npm run build
 
-FROM node:20-alpine
+FROM nginx:stable-alpine
 
-WORKDIR /app
+WORKDIR /usr/share/nginx/html
 
-COPY --from=builder /app/package.json /app/package-lock.json* ./
-COPY --from=builder /app/apps/web/package.json ./apps/web/
-COPY --from=builder /app/packages/models/package.json ./packages/models/
+RUN rm -rf ./*
 
-RUN npm ci --only=production
+COPY --from=builder /app/apps/web/dist .
 
-COPY --from=builder /app/packages/models/dist ./packages/models/dist
-COPY --from=builder /app/apps/web/dist ./apps/web/dist
+COPY --from=builder /app/apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 
-WORKDIR /app/apps/web
+EXPOSE 80
 
-EXPOSE 4000
-
-CMD ["node", "dist/index.js"]
+CMD ["nginx", "-g", "daemon off;"]

@@ -31,6 +31,6 @@ COPY --from=builder /app/apps/socket-service/dist ./apps/socket-service/dist
 
 WORKDIR /app/apps/socket-service
 
-EXPOSE 4000
+EXPOSE 4200
 
 CMD ["node", "dist/index.js"]
