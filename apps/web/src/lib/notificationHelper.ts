@@ -36,7 +36,7 @@ export async function subscribeToPushNotifications(
     });
 
     // Send subscription to backend with additional info
-    const response = await fetch(`${NOTIFICATION_URL}/api/subscribe`, {
+    const response = await fetch(`${NOTIFICATION_URL}/api/notify/subscribe`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

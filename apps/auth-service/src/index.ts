@@ -19,11 +19,17 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 
-app.use("/api/auth", router);
-
-app.get("/health", (req, res) => {
-  res.send("Auth service is running...");
+app.get("/api/auth/health", (req, res) => {
+  const healthStatus = {
+    service: "auth-service",
+    status: "healthy",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  };
+  res.send(healthStatus);
 });
+
+app.use("/api/auth", router);
 
 connectDB()
   .then(() => {

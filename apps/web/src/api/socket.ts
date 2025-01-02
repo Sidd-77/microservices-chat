@@ -27,6 +27,7 @@ export class ChatSocketService {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
+      path: '/api/socket',
     });
 
     this.setupSocketListeners();

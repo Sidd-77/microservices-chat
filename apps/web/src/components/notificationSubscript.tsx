@@ -4,14 +4,12 @@ import {
   subscribeToPushNotifications,
 } from "../lib/notificationHelper";
 import { Button } from "@nextui-org/react";
-import { NOTIFICATION_URL } from "../config/env";
 
 export default function NotificationSubscribe({ userId }: { userId: string }) {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check if subscriptionId is already stored in localStorage
   useEffect(() => {
      const subscriptionId = localStorage.getItem("pushSubscriptionId");
     if (subscriptionId) {
@@ -24,24 +22,11 @@ export default function NotificationSubscribe({ userId }: { userId: string }) {
     setError(null);
 
     try {
-      // Check if the backend is accessible
-      const healthCheck = await fetch(
-        `${NOTIFICATION_URL}/health`,
-        {
-          method: "GET",
-        },
-      ).catch(() => null);
-
-      if (!healthCheck) {
-        throw new Error(
-          "Backend server is not accessible. Please make sure it's running on the correct port.",
-        );
-      }
 
       const swRegistration = await registerServiceWorker();
       const { subscriptionId } = await subscribeToPushNotifications(swRegistration, userId);
       console.log("Subscription ID:", subscriptionId);
-      // Store subscription ID in localStorage
+
       if (subscriptionId) {
         localStorage.setItem("pushSubscriptionId", subscriptionId);
       }

@@ -7,11 +7,18 @@ import fileRoutes from "./fileRoutes";
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use("/api/files", fileRoutes);
 
-app.get("/health", (req, res) => {
-  res.send("File service is running...");
+app.get("/api/files/health", (req, res) => {
+  const healthStatus = {
+    service: "file-service",
+    status: "healthy",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  };
+  res.send(healthStatus);
 });
+
+app.use("/api/files", fileRoutes);
 
 const PORT = process.env.PORT || 4300;
 app.listen(PORT, () => {

@@ -25,9 +25,10 @@ export class SocketService {
   constructor(httpServer: HttpServer) {
     this.io = new Server(httpServer, {
       cors: {
-        origin: process.env.CLIENT_URL || "http://localhost:5173",
+        origin: "*",
         methods: ["GET", "POST"],
       },
+      path: "/api/socket",
     });
 
     this.publisher = new Redis(RedisURL);
@@ -122,20 +123,17 @@ export class SocketService {
   }
 
   private handleUserConnect(socketId: string, userId: string): void {
-    // Remove any existing connections for this user
     this.onlineUsers = this.onlineUsers.filter(
       (user) => user.userId !== userId
     );
 
     this.onlineUsers.push({ userId, socketId });
 
-    // Notify all users about the new online user
     this.io.emit("user:status", {
       userId,
       status: "online",
     });
 
-    // Send current online users list to the newly connected user
     const onlineUserIds = this.onlineUsers.map((user) => user.userId);
     this.io.to(socketId).emit("users:online", onlineUserIds);
   }
@@ -167,7 +165,6 @@ export class SocketService {
     createdAt: Date;
   }): Promise<void> {
     try {
-      // Publish message to Redis
       await this.publisher.publish(CHANNELS.MESSAGE, JSON.stringify(data));
       await this.messageQueue.pushMessage(data);
     } catch (error) {
@@ -184,12 +181,10 @@ export class SocketService {
     isfile: boolean;
     createdAt: Date;
   }): void {
-    // Get all relevant users
     const relevantUsers = this.onlineUsers.filter(
       (user) => user.userId === data.sender || user.userId === data.receiver
     );
 
-    // Send message to online users
     if (relevantUsers.length > 0) {
       relevantUsers.forEach((user) => {
         this.io.to(user.socketId).emit("message", {
@@ -199,7 +194,6 @@ export class SocketService {
       });
     }
 
-    // Check if receiver is offline and send notification
     const isReceiverOffline = !this.onlineUsers.some(
       (user) => user.userId === data.receiver
     );

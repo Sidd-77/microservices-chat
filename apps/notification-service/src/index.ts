@@ -60,11 +60,17 @@ async function initializeServices() {
   }
 }
 
-app.get("/health", (req: Request, res: Response) => {
-  res.send("Notification service is running...");
+app.get("/api/notify/health", (req, res) => {
+  const healthStatus = {
+    service: "notification-service",
+    status: "healthy",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  };
+  res.send(healthStatus);
 });
 
-app.use("/api", subscriptionRouter);
+app.use("/api/notify", subscriptionRouter);
 
 app.listen(PORT, () => {
   mongoose

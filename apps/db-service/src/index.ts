@@ -32,14 +32,13 @@ async function processMessage(message: any) {
     console.log("Message saved successfully:");
   } catch (error) {
     console.error("Error in message processing:", error);
-    throw error; // Rethrow to trigger message nack
+    throw error; 
   }
 }
 
 async function initializeServices() {
   try {
     await messageQueue.initialize();
-    // Set up message consumer
     await messageQueue.consumeMessage(async (message: any) => {
       await processMessage(message);
     });
@@ -51,13 +50,19 @@ async function initializeServices() {
   }
 }
 
-app.use("/api/users", userRoutes);
-app.use("/api/chats", chatRoutes);
-app.use("/api/messages", messageRoutes);
-
-app.get("/health", (req, res) => {
-  res.send("DB Service is running...");
+app.get("/api/db/health", (req, res) => {
+  const healthStatus = {
+    service: "db-service",
+    status: "healthy",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  };
+  res.send(healthStatus);
 });
+
+app.use("/api/db/users", userRoutes);
+app.use("/api/db/chats", chatRoutes);
+app.use("/api/db/messages", messageRoutes);
 
 connectDB()
   .then(() => {
