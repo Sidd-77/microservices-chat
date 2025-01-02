@@ -11,11 +11,11 @@ RUN npm ci
 
 COPY . .
 
-ENV VITE_AUTH_URL="messagepunk.com" \
-    VITE_DB_URL="messagepunk.com" \
-    VITE_SOCKET_URL="messagepunk.com" \
-    VITE_FILE_URL="messagepunk.com" \
-    VITE_NOTIFICATION_URL="messagepunk.com" \
+ENV VITE_AUTH_URL="http://messagepunk.com" \
+    VITE_DB_URL="http://messagepunk.com" \
+    VITE_SOCKET_URL="http://messagepunk.com" \
+    VITE_FILE_URL="http://messagepunk.com" \
+    VITE_NOTIFICATION_URL="http://messagepunk.com" \
     VITE_VAPID_PUBLIC_KEY=${VITE_VAPID_PUBLIC_KEY}
 
 WORKDIR /app/packages/models
