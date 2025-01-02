@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: siddpunk/messagepunk-web
+        ports:
+        - containerPort: 80
+        env:
+        - name: VITE_AUTH_URL
+          value: "http://auth-service:4000"
+        - name: VITE_DB_URL
+          value: "http://db-service:4100"
+        - name: VITE_SOCKET_URL
+          value: "http://socket-service:4200"
+        - name: VITE_FILE_URL
+          value: "http://file-service:4300"
+        - name: VITE_NOTIFICATION_URL
+          value: "http://notification-service:4400"
+        - name: VITE_VAPID_PUBLIC_KEY
+          value: "BEQgZOfxmlUwwQTVVeVUV7HDghCPuN6o19X2bvZzoThX8tbyge0TLFQ6Iz0_TUpL6rQhcw05eayg"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  selector:
+    app: web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP

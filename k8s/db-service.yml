@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-service
+  labels:
+    app: db-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-service
+  template:
+    metadata:
+      labels:
+        app: db-service
+    spec:
+      containers:
+      - name: db-service
+        image: siddpunk/messagepunk-db-service
+        ports:
+        - containerPort: 4100
+        env:
+        - name: PORT
+          value: "4100"
+        - name: MONGO_URI
+          value: "mongodb://mongo:27017/db"
+        - name: RABBITMQ_URL
+          value: "amqp://user:password@rabbitmq:5672"
+        - name: JWT_SECRET
+          value: "secret"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-service
+  labels:
+    app: db-service
+spec:
+  selector:
+    app: db-service
+  ports:
+    - protocol: TCP
+      port: 4100
+      targetPort: 4100
+  type: ClusterIP
