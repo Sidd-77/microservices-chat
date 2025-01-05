@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 const apiItem = [
   {
@@ -35,7 +36,7 @@ const apiItem = [
     title: "Socket Service",
     url: "/docs/api/socket",
     icon: Calendar,
-  }
+  },
 ];
 
 export function AppSidebar() {
@@ -51,13 +52,12 @@ export function AppSidebar() {
               {apiItem.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a 
-                      href={item.url}
-                      className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg mx-2"
-                    >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </a>
+                    <Link href={item.url}>
+                      <div className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-lg mx-2">
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </div>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

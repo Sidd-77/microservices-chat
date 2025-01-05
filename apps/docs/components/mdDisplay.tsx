@@ -1,23 +1,25 @@
+"use client";
+
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { useLocation } from 'react-router-dom';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import 'github-markdown-css';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import { usePathname } from 'next/navigation';
 
 const MarkdownViewer = () => {
   const [content, setContent] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
+  const location = usePathname();
 
   useEffect(() => {
     const fetchMarkdownContent = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        const markdownPath = `${location.pathname}.md`;
+        const markdownPath = `/docs${location}.md`;
         const response = await fetch(markdownPath);
         if (!response.ok) {
           throw new Error(`Failed to load markdown content: ${response.statusText}`);
@@ -32,7 +34,7 @@ const MarkdownViewer = () => {
     };
 
     fetchMarkdownContent();
-  }, [location.pathname]);
+  }, [location]);
 
   if (isLoading) {
     return (
