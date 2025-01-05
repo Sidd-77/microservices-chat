@@ -7,10 +7,13 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
-    nginx.ingress.kubernetes.io/proxy-buffering: "false"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "socket-service"
+    nginx.ingress.kubernetes.io/enable-websocket: "true"
+    nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"
+    nginx.ingress.kubernetes.io/upstream-hash-by: "$http_x_forwarded_for"
+
 
 spec:
   rules:
@@ -38,6 +41,20 @@ spec:
             name: db-service
             port:
               number: 4100
+      - path : /api/files
+        pathType: Prefix
+        backend:
+          service:
+            name: file-service
+            port:
+              number: 4300
+      - path : /api/notify
+        pathType: Prefix
+        backend:
+          service:
+            name: notification-service
+            port:
+              number: 4400
       - path: /
         pathType: Prefix
         backend:

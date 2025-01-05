@@ -10,10 +10,12 @@ import mongoose from "mongoose";
 import NotificationQueue from "./notificationQueue";
 import { sendNotificationToUser } from "./subscriptionService";
 
+
+
 const app: Express = express();
 const notificationQueue = new NotificationQueue();
 const PORT = process.env.PORT || 4400;
-
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/db";
 app.use(
   cors({
     origin: "*",
@@ -74,7 +76,7 @@ app.use("/api/notify", subscriptionRouter);
 
 app.listen(PORT, () => {
   mongoose
-    .connect("mongodb://localhost:27017/db")
+    .connect(MONGO_URI)
     .then(() => {
       console.log("Connected to MongoDB");
       console.log(`Server is running on port ${PORT}`);

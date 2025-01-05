@@ -2,7 +2,7 @@
 
 ### Subscribe to notifcation service
 
-**Path:** `/api/subscribe`
+**Path:** `/api/notify/subscribe`
 
 **Method:** `POST`
 
@@ -24,7 +24,7 @@
 
 ### Push Notification to Client
 
-**Path:** `/api/push-notification/client`
+**Path:** `/api/notify/push-notification/client`
 
 **Method:** `POST`
 
@@ -46,7 +46,7 @@
 
 ### Push Notification to User
 
-**Path:** `/api/push-notification/user`
+**Path:** `/api/notify/push-notification/user`
 
 **Method:** `POST`
 

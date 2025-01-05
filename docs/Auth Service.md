@@ -4,7 +4,7 @@
 
 ### Register
 
-**Path:** `/auth/register`
+**Path:** `/api/auth/register`
 
 **Parameters:**
 - `username` (string): The username of the user.
@@ -23,7 +23,7 @@
 
 ### Login
 
-**Path:** `/auth/login`
+**Path:** `/api/auth/login`
 
 **Parameters:**
 - `email` (string): The email address of the user.

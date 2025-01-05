@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Avatar, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { ChatSocketService } from "../../api/socket";
 import { ChatMessage } from "../../types/chat";
 import { FileIcon, Download } from "lucide-react";
@@ -119,13 +119,6 @@ export function Messages({ messages: initialMessages, selectedChat, currentUserI
             key={message._id}
             className={`flex items-start space-x-3 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
           >
-            {!isCurrentUser && otherUser && (
-              <Avatar 
-                src={otherUser.avatar || `https://i.pravatar.cc/150?u=${otherUser._id}`} 
-                size="sm" 
-                className="shrink-0" 
-              />
-            )}
             <div 
               className={`
                 max-w-[70%] p-3 rounded-lg 
@@ -140,13 +133,6 @@ export function Messages({ messages: initialMessages, selectedChat, currentUserI
                 {new Date(message.createdAt).toLocaleTimeString()}
               </div>
             </div>
-            {isCurrentUser && (
-              <Avatar 
-                src={`https://i.pravatar.cc/150?u=${currentUserId}`}
-                size="sm" 
-                className="shrink-0" 
-              />
-            )}
           </div>
         );
       })}
