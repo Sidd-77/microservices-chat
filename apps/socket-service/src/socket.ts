@@ -27,9 +27,17 @@ export class SocketService {
       cors: {
         origin: "*",
         methods: ["GET", "POST"],
+        allowedHeaders: ["*"],
+        credentials: true
       },
       path: "/api/socket",
+      transports: ['websocket', 'polling'], // Try WebSocket first, fallback to polling
+      allowUpgrades: true,
+      upgradeTimeout: 10000,
+      pingInterval: 10000,
+      pingTimeout: 5000
     });
+
 
     this.publisher = new Redis(RedisURL);
     this.subscriber = new Redis(RedisURL);
@@ -78,8 +86,14 @@ export class SocketService {
   }
 
   private setupSocketHandlers(): void {
+    this.io.engine.on('connection', (socket) => {
+      console.log('New raw connection with transport:', socket.transport.name);
+    });
+  
     this.io.on("connection", (socket) => {
       console.log("New client connected");
+      console.log('Socket connected with id:', socket.id);
+      console.log('Transport:', socket.conn.transport.name);
 
       socket.on("user:connect", (userId: string) => {
         this.handleUserConnect(socket.id, userId);

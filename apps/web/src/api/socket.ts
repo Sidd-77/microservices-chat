@@ -28,12 +28,26 @@ export class ChatSocketService {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       path: '/api/socket',
+      transports: ['websocket', 'polling'], // Try WebSocket first, fallback to polling
+      upgrade: true,
+      rememberUpgrade: true,
+      timeout: 10000
     });
 
     this.setupSocketListeners();
   }
 
   private setupSocketListeners(): void {
+
+
+    this.socket.on('connect', () => {
+      console.log('Socket connected with transport:', this.socket.io.engine.transport.name);
+    });
+  
+    // this.socket.io.engine.on('upgrade', () => {
+    //   console.log('Socket transport upgraded to:', this.socket.io.engine.transport.name);
+    // });
+  
     // Single message handler for both sent and received messages
     this.socket.on('message', (data: { message: ChatMessage, chatId: string }) => {
       // Check if we've already processed this message
@@ -67,6 +81,10 @@ export class ChatSocketService {
     // Connection error handling
     this.socket.on('connect_error', (error) => {
       console.error('Socket connection error:', error);
+      console.error('Socket connection details:', {
+        path: this.socket.io.opts.path,
+        transports: this.socket.io.opts.transports
+      });
     });
 
     // Cleanup processed messages on disconnect
