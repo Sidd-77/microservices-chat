@@ -15,12 +15,12 @@ export default function Page() {
         </CardHeader>
         <CardContent>
           <p className="mt-4 text-lg sm:text-xl text-muted-foreground text-center max-w-3xl mx-auto">
-            Discover how to use and integrate our powerful chat application. Get started quickly with our comprehensive guides and API references.
+            Welcome to the documentation for the My Chat Application. Here you will find all the information you need to get to know the application, its features, and how to setup and use it.
           </p>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mt-8">
           <Button size="lg" asChild>
-            <Link href="/docs/api/auth">Get Started</Link>
+            <Link href="/docs/intro/intro">Read</Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
             <Link href="/docs/api/auth">API Reference</Link>
