@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 
 export default function Page() {
+  redirect("/docs/intro/intro");
   return (
     <div className="container mx-auto px-4 py-16 md:py-24 lg:py-32">
       <Card className="bg-background/60 backdrop-blur-lg border-none shadow-lg">
