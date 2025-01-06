@@ -1,7 +1,7 @@
 
 import { redirect } from "next/navigation"
 const DocSite = () => {
-  redirect("/docs")
+  redirect("/docs/intro/intro")
   return (
     <div>Useless home page</div>
   )
