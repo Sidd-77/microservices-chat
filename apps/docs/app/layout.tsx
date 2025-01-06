@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
+      <head>
         <meta name="description" content={"Documentation for Microservices Chat Application"} />
         <meta name="keywords" content="microservices, chat application, documentation, kubernetes, pub/sub, nodejs" />
         <meta name="robots" content="index, follow" />
@@ -27,7 +27,7 @@ export default function RootLayout({
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://microservices-chat-docs.vercel.app/" />
 
-      </Head>
+      </head>
       <body className={inter.className+ " dark"}>{children}</body>
     </html>
   );
