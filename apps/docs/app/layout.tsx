@@ -21,6 +21,7 @@ export default function RootLayout({
         <meta name="description" content={"Documentation for Microservices Chat Application"} />
         <meta name="keywords" content="microservices, chat application, documentation, kubernetes, pub/sub, nodejs" />
         <meta name="robots" content="index, follow" />
+        <meta name="google-site-verification" content="Z5SlATHSmQRrLuyMXnq0-qq42wRlF5xGhwFib_Te8Mc" />
         <meta property="og:title" content={"Microservices Chat Application"} />
         <meta property="og:description" content={"Documentation for Microservices Chat Application"} />
         <meta property="og:type" content="website" />
