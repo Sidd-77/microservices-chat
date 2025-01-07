@@ -12,7 +12,6 @@ function createEnvFiles() {
   packages.forEach((packageName) => {
     const envExamplePath = path.join(appsDir, packageName, '.env.example');
     let envPath = path.join(appsDir, packageName, '.env');
-    if(packageName === 'web') envPath = path.join(appsDir, packageName, '.env.local');
 
     if (fs.existsSync(envExamplePath)) {
       if (!fs.existsSync(envPath)) {

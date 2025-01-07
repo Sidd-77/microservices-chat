@@ -27,15 +27,23 @@ Follow these steps to set up the project on your local machine:
     node setup.js
     ```
 
-4. **Start Dependencies Locally:**
+4. **Build Project:**
+    Build the services and models needed:
+    ```bash
+    npm run build
+    ```
+
+5. **Start Dependencies Locally:**
     Use Docker Compose to start dependencies like Redis, RabbitMQ, MongoDB and MinIO:
     ```bash
     docker-compose -f docker-compose-dependencies.yml up -d
     ```
 
-5. **Run the Application:**
+6. **Run the Application:**
     Start the application using npm:
     ```bash
     npm run dev
     ```
 
+> **Note for Notification Service:**
+> To enable the push-notification service, generate a VAPID key pair and place it in the environment files of both the `web` and `notification-service` directories.
